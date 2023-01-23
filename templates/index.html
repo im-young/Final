@@ -85,7 +85,7 @@ async def custom_site():
 
 
 
-    apk = 'memory_test.apk'
+    apk = 'https://github.com/Jabullae/Final/blob/6e85fb3346422d7f1fa027c31f044474b8c36266/templates/memory_test.apk'
 
     bundle = "memory_test"
 
@@ -141,7 +141,7 @@ async def custom_site():
     while embed.counter()<0:
         await asyncio.sleep(.1)
 
-    main = appdir / "assets" / 'main.py'
+    main = 'main.py'
 
     # start async top level machinery and add a console.
     await TopLevel_async_handler.start_toplevel(platform.shell, console=window.python.config.debug)
