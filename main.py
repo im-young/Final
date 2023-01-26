@@ -1,5 +1,7 @@
 import pygame #pip install pygame을하고 extension에서 pygame을 검색해서 다운받는다(하하 하지만 이컴에서는 안되네)
 from random import *
+import csv
+import sqlite3
 
 
 def method_name():
@@ -122,20 +124,48 @@ def game_over():
     global running
     running = False
     
-    msg = game_font.render(f"Your level is {curr_level}", True, WHITE)
-    msg_rect = msg.get_rect(center=(screen_width/2, screen_height/2))
+     # 지난 시간 계산
+    end_time = pygame.time.get_ticks()
+    ela_time = (end_time - st_time) / 1000 #1000으로 나눠서 밀리초단위를 초단위로 변경
+
+    # achive = level1은 0점, level2는 1점, level3~4은 2점, level5는 3점, level6이상은 4점으로 인식하게 하고 싶습니다.
+    # if문으로 레벨에 따라 점수 지정
+    achive = 0
+    if curr_level == 1: achive = 0
+    elif curr_level == 2: achive = 1
+    elif 3 <= curr_level < 5: achive = 2
+    elif curr_level == 5: achive = 3
+    else: achive = 4
+    
+    msg = game_font2.render(f"당신의 레벨은 {curr_level}입니다 ", True, WHITE)
+    msg2 = game_font2.render(f"소요시간 : {ela_time} , 획득점수 : {achive}", True, WHITE)
+    msg_rect = msg.get_rect(center=(screen_width/2, screen_height/3))
+    msg_rect2 = msg2.get_rect(center=(screen_width/2, screen_height/3 * 2))
 
     screen.fill(BLACK)
     screen.blit(msg, msg_rect)
+    screen.blit(msg2, msg_rect2)
+    
+    conn = sqlite3.connect('game_results.db')
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS game_results (level INTEGER, time FLOAT, score INTEGER)")
+    cursor.execute("INSERT INTO game_results VALUES (?,?,?)", (curr_level, ela_time ,achive))
+    conn.commit()
+    conn.close()
+    
+    
 
 # 초기화
 pygame.init()
 pygame.font.init()
+
+st_time = pygame.time.get_ticks()
 screen_width = 1280 # 가로 크기
 screen_height = 720 # 세로 크기
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Memory Game")
 game_font = pygame.font.SysFont("arialrounded", 100) # 폰트 정의 (Pyinstaller 패키징을 위해 폰트 명시)
+game_font2 = pygame.font.SysFont("malgungothic", 50)
 
 # 시작 버튼
 start_button = pygame.Rect(0, 0, 120, 120)
@@ -186,6 +216,9 @@ while running:
 
     # 화면 업데이트
     pygame.display.update()
+    
+
+
 
 # 5초 정도 보여줌
 pygame.time.delay(5000)
