@@ -1,7 +1,7 @@
 import pygame #pip install pygame을하고 extension에서 pygame을 검색해서 다운받는다(하하 하지만 이컴에서는 안되네)
 from random import *
 import csv
-import sqlite3
+
 
 
 def method_name():
@@ -146,12 +146,7 @@ def game_over():
     screen.blit(msg, msg_rect)
     screen.blit(msg2, msg_rect2)
     
-    conn = sqlite3.connect('game_results.db')
-    cursor = conn.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS game_results (level INTEGER, time FLOAT, score INTEGER)")
-    cursor.execute("INSERT INTO game_results VALUES (?,?,?)", (curr_level, ela_time ,achive))
-    conn.commit()
-    conn.close()
+    
     
     
 
